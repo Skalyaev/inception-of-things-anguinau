@@ -7,19 +7,19 @@ up:
 	@mkdir -p "$(VOLUME_DIR)"
 	@vagrant up --provider=virtualbox
 
+down:
+	@vagrant halt
+
+clean: down
+	@vagrant destroy -f
+	@rm -rf "$(VOLUME_DIR)/"*
+
+re: clean up
+
 ssh-server:
 	@vagrant ssh "$(USERNAME)S"
 
 ssh-worker:
 	@vagrant ssh "$(USERNAME)SW"
 
-down:
-	@vagrant halt
-
-clean:
-	@vagrant destroy -f
-	@rm -rf "$(VOLUME_DIR)/"*
-
-re: clean up
-
-.PHONY: all up ssh-server ssh-worker down clean re
+.PHONY: all up down clean re ssh-server ssh-worker

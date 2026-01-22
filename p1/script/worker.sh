@@ -13,7 +13,7 @@ export K3S_URL="https://$SERVER_IP:6443"
 while [ ! -f "$K3S_TOKEN_FILE" ]; do sleep 1; done
 
 until curl -k -s "$K3S_URL/ping" | grep -q 'pong'; do
-    sleep 1
+  sleep 1
 done
 
 #============================#

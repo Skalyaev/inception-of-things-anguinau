@@ -8,7 +8,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/Skalyaev/inception-of-things.git
+    repoURL: https://github.com/Skalyaev/inception-of-things-anguinau.git
     path: p3/k8s/dev
 
   destination:

@@ -18,6 +18,3 @@ spec:
       containers:
         - name: playground
           image: wil42/playground:v1
-
-
-
