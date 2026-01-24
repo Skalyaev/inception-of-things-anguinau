@@ -181,7 +181,14 @@ success "project created"
 URL="https://oauth2:${TOKEN}@${NODE_IP}"
 URL+=":${NODE_PORT}/${GITLAB_URI}.git"
 
-if ! git ls-remote "$URL" HEAD &>/dev/null; then
+export GIT_SSL_NO_VERIFY=true
+
+set +e
+REMOTE_CHECK=$(git ls-remote "$URL" refs/heads/main 2>&1)
+REMOTE_EXISTS=$?
+set -e
+
+if [ $REMOTE_EXISTS -ne 0 ] || [ -z "$REMOTE_CHECK" ]; then
   DEV_DIR="$BASE_DIR/k8s/dev"
   
   TMP_DIR="$(mktemp -d)"
@@ -203,7 +210,10 @@ if ! git ls-remote "$URL" HEAD &>/dev/null; then
   git commit -qm 'initial commit'
   
   git remote add 'origin' "$URL"
-  git push -u 'origin' 'main'
+  
+  set +e
+  git push -u 'origin' 'main' 2>/dev/null
+  set -e
   
   popd >'/dev/null'
 fi
