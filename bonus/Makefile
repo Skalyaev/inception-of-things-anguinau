@@ -1,11 +1,14 @@
 CLUSTER_NAME=iot
 
 SCRIPT_DIR=script
+
+ARGOCD_DIR=$(SCRIPT_DIR)/argocd
 GITLAB_DIR=$(SCRIPT_DIR)/gitlab
 SETUP_SCRIPT=$(SCRIPT_DIR)/setup.sh
 
+APP_TEMPLATE=$(ARGOCD_DIR)/application.yaml
+
 GITLAB_UP_SCRIPT=$(GITLAB_DIR)/up.sh
-GITLAB_DOWN_SCRIPT=$(GITLAB_DIR)/down.sh
 SWITCH_SCRIPT=$(GITLAB_DIR)/switch.sh
 
 GITLAB_NAMESPACE=gitlab
@@ -40,12 +43,6 @@ down:
 	@k3d cluster stop "$(CLUSTER_NAME)"
 
 clean:
-	@-KUBE_CONTEXT="k3d-$(CLUSTER_NAME)" \
-		bash "$(GITLAB_DOWN_SCRIPT)" \
-		"$(GITLAB_NAMESPACE)" \
-		"$(GITLAB_LOCAL_URL)" \
-		"$(GITLAB_PROJECT_URI)"
-
 	@-k3d cluster stop "$(CLUSTER_NAME)"
 	@-k3d cluster delete "$(CLUSTER_NAME)"
 
@@ -60,6 +57,11 @@ clean:
 
 	@-sudo sed -i \
 		"$(ETC_HOSTS_SED_IP)$(ETC_HOSTS_SED_DOMAIN)" '/etc/hosts'
+
+	@-sed -i \
+		-e "s|$(GITLAB_INTERN_URL)|\$$(GITLAB_URL)|g" \
+		-e "s|$(GITLAB_PROJECT_URI)|\$$(GITLAB_PROJECT)|g" \
+		"$(APP_TEMPLATE)"; \
 
 re: clean up
 

@@ -178,33 +178,35 @@ fi
 success "project created"
 
 #============================# Application upload
-DEV_DIR="$BASE_DIR/k8s/dev"
-
-TMP_DIR="$(mktemp -d)"
-trap 'rm -rf "$TMP_DIR"' EXIT
-
-cp -a "${DEV_DIR}/." "$TMP_DIR/"
-
 URL="https://oauth2:${TOKEN}@${NODE_IP}"
 URL+=":${NODE_PORT}/${GITLAB_URI}.git"
 
-pushd "$TMP_DIR" >'/dev/null'
-git init -q
-git checkout -b 'main'
-
-git config user.name 'root'
-git config user.email 'root@gitlab.local'
-
-git config http.extraHeader "Host: $GITLAB_HOST"
-git config http.sslVerify false
-
-git add .
-git commit -qm 'initial commit'
-
-git remote add 'origin' "$URL"
-git push -u 'origin' 'main'
-
-popd >'/dev/null'
+if ! git ls-remote "$URL" HEAD &>/dev/null; then
+  DEV_DIR="$BASE_DIR/k8s/dev"
+  
+  TMP_DIR="$(mktemp -d)"
+  trap 'rm -rf "$TMP_DIR"' EXIT
+  
+  cp -a "${DEV_DIR}/." "$TMP_DIR/"
+  
+  pushd "$TMP_DIR" >'/dev/null'
+  git init -q
+  git checkout -b 'main'
+  
+  git config user.name 'root'
+  git config user.email 'root@gitlab.local'
+  
+  git config http.extraHeader "Host: $GITLAB_HOST"
+  git config http.sslVerify false
+  
+  git add .
+  git commit -qm 'initial commit'
+  
+  git remote add 'origin' "$URL"
+  git push -u 'origin' 'main'
+  
+  popd >'/dev/null'
+fi
 success "application uploaded"
 
 #============================#

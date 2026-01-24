@@ -15,10 +15,12 @@ up:
 down:
 	@vagrant halt
 
-clean: down
-	@vagrant destroy -f
+clean:
+	@-vagrant halt
+	@-vagrant destroy -f
+	@-rm -rf "$(VOLUME_DIR)/"*
 
-re: clean up
+re: clean all
 
 ssh:
 	@vagrant ssh "$(USERNAME)S"

@@ -152,15 +152,10 @@ k -n 'argocd' rollout status \
   'statefulset/argocd-application-controller'
 
 APP_TEMPLATE="$ARGOCD_DIR/application.yaml"
-if [[ -n "${GITLAB_URL:-}" && -n "${GITLAB_PROJECT:-}" ]]; then
-
-  sed \
-    -e "s|\\$(GITLAB_URL)|$GITLAB_URL|g" \
-    -e "s|\\$(GITLAB_PROJECT)|$GITLAB_PROJECT|g" \
-    "$APP_TEMPLATE" | k apply -f -
-else
-  k apply -f "$APP_TEMPLATE"
-fi
+sed \
+  -e "s|\$(GITLAB_URL)|$GITLAB_URL|g" \
+  -e "s|\$(GITLAB_PROJECT)|$GITLAB_PROJECT|g" \
+  "$APP_TEMPLATE" | k apply -f -
 
 success 'argocd ready'
 
