@@ -144,7 +144,7 @@ if [[ $INSTALLED -eq 0 ]]; then
 
   k apply -f "$ARGOCD_DIR/namespace.yaml"
 
-  k apply -n 'argocd' -f "$URL"
+  k apply -n 'argocd' --server-side -f "$URL"
 fi
 k -n 'argocd' rollout status 'deploy/argocd-server'
 k -n 'argocd' rollout status 'deploy/argocd-repo-server'

@@ -138,7 +138,7 @@ if [[ $INSTALLED -eq 0 ]]; then
     apply -f "$ARGOCD_DIR/namespace.yaml"
 
   kubectl --context "$KUBE_CONTEXT" \
-    apply -n 'argocd' -f "$URL"
+    apply -n 'argocd' --server-side -f "$URL"
 fi
 kubectl --context "$KUBE_CONTEXT" -n 'argocd' \
   rollout status 'deploy/argocd-server'
